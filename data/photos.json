@@ -1,0 +1,15 @@
+[
+  {
+    "id": "4",
+    "src": "/images/galeri/cafe-date-1.jpg",
+    "images": [
+      "/images/galeri/cafe-date-1.jpg",
+      "/images/galeri/cafe-date-2.jpg"
+    ],
+    "alt": "Sore santai berdua",
+    "description": "Menikmati waktu santai berdua ditemani cahaya matahari sore yang hangat. Obrolan ringan dan senyum manis.",
+    "location": "Cafe & Gazebo",
+    "date": "Mei 2026",
+    "category": "Galeri"
+  }
+]
