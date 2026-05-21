@@ -50,16 +50,16 @@ export async function uploadPhoto(formData: FormData) {
     }
 
     const is_hero = formData.get("is_hero") === "on";
+    const photoId = Date.now().toString();
 
     const newPhoto = {
-      id: Date.now().toString(),
+      id: photoId,
       src: savedPaths[0],
       images: savedPaths,
       alt: title,
       description,
       location,
-      date,
-      is_hero
+      date
     };
 
     const { error: insertError } = await supabase
@@ -68,7 +68,15 @@ export async function uploadPhoto(formData: FormData) {
 
     if (insertError) {
       console.error("Gagal menyisipkan ke tabel database:", insertError);
-      return { error: "Gagal menyimpan metadata ke database" };
+      return { error: "Gagal menyimpan metadata ke database: " + insertError.message };
+    }
+
+    // Update is_hero secara terpisah (opsional, jika kolom sudah ada)
+    if (is_hero) {
+      await supabase.from("photos").update({ is_hero: true }).eq("id", photoId).then(
+        () => {},
+        () => {} // abaikan error jika kolom belum ada
+      );
     }
 
     revalidatePath("/galeri");
@@ -225,15 +233,20 @@ export async function updatePhoto(id: string, formData: FormData, keptImages: st
         alt: title,
         description,
         location,
-        date,
-        is_hero
+        date
       })
       .eq("id", id);
 
     if (updateError) {
       console.error("Gagal memperbarui database:", updateError);
-      return { error: "Gagal menyimpan perubahan ke database" };
+      return { error: "Gagal menyimpan perubahan ke database: " + updateError.message };
     }
+
+    // Update is_hero secara terpisah (opsional, jika kolom sudah ada)
+    await supabase.from("photos").update({ is_hero }).eq("id", id).then(
+      () => {},
+      () => {} // abaikan error jika kolom belum ada
+    );
 
     revalidatePath("/galeri");
     revalidatePath("/admin");
