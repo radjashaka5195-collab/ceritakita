@@ -5,6 +5,9 @@ import { supabase } from "../lib/supabase";
 
 export async function uploadPhoto(formData: FormData) {
   try {
+    if (!supabase) {
+      return { error: "Koneksi Supabase belum dikonfigurasi. Pastikan NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY sudah dimasukkan di Vercel." };
+    }
     const files = formData.getAll("file") as File[];
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
@@ -81,6 +84,9 @@ export async function uploadPhoto(formData: FormData) {
 
 export async function deletePhoto(id: string) {
   try {
+    if (!supabase) {
+      return { error: "Koneksi Supabase belum dikonfigurasi. Pastikan NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY sudah dimasukkan di Vercel." };
+    }
     const { data: photoToDelete, error: fetchError } = await supabase
       .from("photos")
       .select("images, src")
@@ -135,6 +141,9 @@ export async function deletePhoto(id: string) {
 
 export async function updatePhoto(id: string, formData: FormData, keptImages: string[]) {
   try {
+    if (!supabase) {
+      return { error: "Koneksi Supabase belum dikonfigurasi. Pastikan NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY sudah dimasukkan di Vercel." };
+    }
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const location = formData.get("location") as string;

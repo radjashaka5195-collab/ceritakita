@@ -96,27 +96,35 @@ export default function AdminClient({ photos }: { photos: Photo[] }) {
       formData.append("file", file);
     });
 
-    let result;
-    if (editingPhoto) {
-      result = await updatePhoto(editingPhoto.id, formData, keptImages);
-    } else {
-      result = await uploadPhoto(formData);
-    }
+    try {
+      let result;
+      if (editingPhoto) {
+        result = await updatePhoto(editingPhoto.id, formData, keptImages);
+      } else {
+        result = await uploadPhoto(formData);
+      }
 
-    if (result.error) {
-      setMessage({ type: "error", text: result.error });
-    } else if (result.success) {
-      setMessage({
-        type: "success",
-        text: editingPhoto ? "Memori berhasil diperbarui!" : "Foto berhasil ditambahkan ke Galeri!"
+      if (result.error) {
+        setMessage({ type: "error", text: result.error });
+      } else if (result.success) {
+        setMessage({
+          type: "success",
+          text: editingPhoto ? "Memori berhasil diperbarui!" : "Foto berhasil ditambahkan ke Galeri!"
+        });
+        setSelectedFiles([]);
+        setEditingPhoto(null);
+        setKeptImages([]);
+        formRef.current?.reset();
+      }
+    } catch (err: any) {
+      console.error("Gagal mengirim data:", err);
+      setMessage({ 
+        type: "error", 
+        text: err?.message || "Gagal menyimpan memori. Pastikan total ukuran foto tidak melebihi 4MB dan environment variables Supabase Anda sudah dikonfigurasi di Vercel." 
       });
-      setSelectedFiles([]);
-      setEditingPhoto(null);
-      setKeptImages([]);
-      formRef.current?.reset();
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   }
 
   return (
